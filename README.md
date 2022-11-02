@@ -38,7 +38,7 @@ npm run start
 
 **Group** : exterminators
 
-Rohan Lekhwani
-Anirudh Lakkaraju
-Arunima Sundar
-Kalyani Patle
+- Anirudh Lakkaraju
+- Arunima Sundar
+- Kalyani Patle
+- Rohan Lekhwani
