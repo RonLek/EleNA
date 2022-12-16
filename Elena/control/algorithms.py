@@ -226,4 +226,103 @@ class Algorithms:
                 weighted_edge[n] = costToStart[n] + G.nodes[n]['dist_from_dest']*0.1
 
 
-    
+    def compare(self, G, shortestPathStats):
+
+        if (self.elev_type == "maximize" and self.best[2] == float('-inf')) or (self.elev_type == "minimize" and self.best[3] == float('-inf')):            
+            return shortestPathStats, [[], 0.0, 0, 0]
+        
+        self.best[0] = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.best[0]]
+
+        # If computed path does not match the requirements
+        if((self.elev_type == "maximize" and self.best[2] < shortestPathStats[2]) or (self.elev_type == "minimize" and self.best[2] > shortestPathStats[2])):
+            self.best = shortestPathStats
+        
+        return shortestPathStats, self.best
+
+
+    def get_shortest_path(self, spt, ept, x, elev_type = "maximize", log=True):
+        
+        # Computes Shortest Path
+        G = self.G
+        self.x = x/100.0
+        self.elev_type = elev_type
+        self.start_node, self.end_node = None, None
+
+        if elev_type == "maximize": 
+            self.best = [[], 0.0, float('-inf'), float('-inf')]
+        else:
+            self.best = [[], 0.0, float('inf'), float('-inf')]
+
+        # Obtains shortest path
+        self.start_node, d1 = ox.get_nearest_node(G, point=spt, return_dist = True)
+        self.end_node, d2   = ox.get_nearest_node(G, point=ept, return_dist = True)
+
+        # returns distance based shortest path
+        self.shortest_route = nx.shortest_path(G, source=self.start_node, target=self.end_node, weight='length')
+        
+        self.shortest_dist  = sum(ox.get_route_edge_attributes(G, self.shortest_route, 'length'))
+        
+        shortest_route_latlong = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.shortest_route] 
+        
+        shortestPathStats = [shortest_route_latlong, self.shortest_dist, \
+                            self.get_Elevation(self.shortest_route, "elevation_gain"), self.get_Elevation(self.shortest_route, "elevation_drop")]
+
+        
+        if(x == 0):
+            return shortestPathStats, shortestPathStats
+
+        start_time = time.time()
+        self.dijkstra_path()
+        end_time = time.time()
+        dijkstra_way = self.best
+        if log:
+            print()
+            print("Statics - Dijkstra's route")
+            print(dijkstra_way[1])
+            print(dijkstra_way[2])
+            print(dijkstra_way[3])
+            print("--- Time taken = %s seconds ---" % (end_time - start_time))
+
+        if elev_type == "maximize": 
+            self.best = [[], 0.0, float('-inf'), float('-inf')]
+        else:
+            self.best = [[], 0.0, float('inf'), float('-inf')]
+
+        start_time = time.time()
+        self.a_star_path()
+        end_time = time.time()
+        a_star_way = self.best
+        if log:
+            print()
+            print("Statics - A star route")
+            print(a_star_way[1])
+            print(a_star_way[2])
+            print(a_star_way[3])
+            print("--- Time taken = %s seconds ---" % (end_time - start_time))
+
+            print()
+
+        if self.elev_type == "maximize":
+            if (dijkstra_way[2] > a_star_way[2]) or (dijkstra_way[2] == a_star_way[2] and dijkstra_way[1] < a_star_way[1]):
+                self.best = dijkstra_way
+                if log:
+                    print("The Dijkstra algorithm computes the best possible route")
+                    print()
+            else:
+                self.best = a_star_way
+                if log:
+                    print("The A star algorithm computes the best possible route")
+                    print()
+        else:
+            if (dijkstra_way[2] < a_star_way[2]) or (dijkstra_way[2] == a_star_way[2] and dijkstra_way[1] < a_star_way[1]):
+                self.best = dijkstra_way
+                if log:
+                    print("The Dijkstra algorithm computes the best possible route")
+                    print()
+            else:
+                self.best = a_star_way
+                if log:
+                    print("The A star algorithm computes the best possible route")
+                    print()
+
+        return self.compare(G, shortestPathStats)
