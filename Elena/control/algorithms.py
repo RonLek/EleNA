@@ -148,4 +148,82 @@ class Algorithms:
         return
 
 
+    def backtrack(self, f_node, c_node):
+        # Plots and reconnects the path
+        if not f_node or not c_node : 
+            return
+        all_n = [c_node]
+        while c_node in f_node:
+            c_node = f_node[c_node]
+            all_n.append(c_node)
+        
+        self.best = [all_n[:], self.get_Elevation(all_n, "normal"), self.get_Elevation(all_n, "elevation_gain"), self.get_Elevation(all_n, "elevation_drop")]
+        return
+
+
+    def costInitialization(self, G):
+        
+        cost = {}
+
+        for node in G.nodes():
+            cost[node] = float("inf")
+        
+        cost[self.start_node] = 0 
+
+        return cost
+
+
+    def a_star_path(self):
+        # Computes the A* path.  
+        eval_node = set()      
+        not_evaluated = set() 
+        least_cost_node = {} 
+        weighted_edge = {} 
+
+
+        if not self.check_nodes() : 
+            return
+        G, minimum_dist= self.G, self.shortest_dist
+        x, elev_type = self.x, self.elev_type
+        start_node= self.start_node
+        end_node = self.end_node
+        
+        costToStart = self.costInitialization(G) 
+
+        not_evaluated.add(start_node)
+                
+        costToStart1 = self.costInitialization(G)
+
+        weighted_edge[start_node] = G.nodes[start_node]['dist_from_dest']*0.1
+        
+        while len(not_evaluated):
+            curr_node = min([(node,weighted_edge[node]) for node in not_evaluated], key=lambda t: t[1])[0]            
+            if curr_node == end_node:
+                self.backtrack(least_cost_node, curr_node)
+                return
+            
+            not_evaluated.remove(curr_node)
+            eval_node.add(curr_node)
+            for n in G.neighbors(curr_node):
+                if n in eval_node: 
+                    continue 
+                if elev_type == "minimize":
+                    pred_costToStart = costToStart[curr_node] + self.get_cost(curr_node, n, "elevation_gain")
+                elif elev_type == "maximize":
+                    pred_costToStart = costToStart[curr_node] + self.get_cost(curr_node, n, "elevation_drop")
+
+                pred_costToStart1 = costToStart1[curr_node] + self.get_cost(curr_node, n, "normal")
+
+                if n not in not_evaluated and pred_costToStart1<=(1+x)*minimum_dist:# Discover a new node
+                    not_evaluated.add(n)
+                else: 
+                    if (pred_costToStart >= costToStart[n]) or (pred_costToStart1>=(1+x)*minimum_dist):
+                        continue 
+
+                least_cost_node[n] = curr_node
+                costToStart[n] = pred_costToStart
+                costToStart1[n] = pred_costToStart1
+                weighted_edge[n] = costToStart[n] + G.nodes[n]['dist_from_dest']*0.1
+
+
     
