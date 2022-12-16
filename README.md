@@ -1,44 +1,52 @@
-# EleNA
+# Elevation Based Navigation System (EleNa)
+Elevation Based Navigation System (EleNa) is a web application that aims to provide users hiking/trekking routes between any two points on a map. The routes can be tuned to either maximize or minimize elevation and the user can specify the percentage of elevation. EleNa provides a traditional shortest path route as well. 
 
-The high-level goal of this project is to develop a software system that determines, given a start and an end location, a route that maximizes or minimizes elevation gain, while limiting the total distance between the two locations to x% of the shortest path.
+# Installation and set up
 
-## Development
+### Requirements
+The application has the following requirements -
+1. osmnx (0.11.4)
+2. networkx (2.4)
+3. Flask (1.1.1)
+4. numpy (1.18.1)
+5. geopy (1.21.0)
 
-### Setup
+The requirements can be installed with pip
 
-Clone and `cd` into the repo. 
+pip install -r requirements.txt
 
-```bash
-# with ssh
-git clone git@github.com:RonLek/EleNA.git
 
-# with http
-git clone https://github.com/RonLek/EleNA.git
+# Running and testing the application
 
-cd EleNA
-```
+### Using the application
+- Clone the git repository from `GIT LINKKKKKKKKKKKKKK`
+- Make `start` an executable by running `chmod +x start`
+- ./start To start up the application. 
+- Head over to `http://127.0.0.1:5000/home` on preferably Google Chrome to use the web interface.
 
-Install all dependencies. See `package.json` for more information. 
+HOME PAGE PICTURE
+![EleNa Interface](home-page.png)
 
-```bash
-npm install
-```
+### Interacting with the UI
+- The start and end points can be set by clicking on the map.
+- The percentage (x%) of shortest distance that the user wants to go extra can be entered in the entry field.
+- The corresponding radio buttons for the minimization or maximization of elevation can be selected. 
+- Once all the inputs are given, clicking the "Calculate" button will display the computed shortest path in blue and the path with elevation in red.
+- Statistics about the path will also be shown on the UI. 
+- Clicking the "Reset" button will clear the UI of all inputs and paths. 
+- To make any change to inputs such as source, destination or x% the user should "Reset" the UI then enter the updated values and click on "Calculate" button to recompute the paths.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Back-end Logic
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- The backend computes the paths using two algorithms - Dijkstra and A* algorithm. The final path returned is the best of the two for the given elevation data. 
 
-```bash
-npm run start
-```
 
-## Authors
+### Testing 
+- To run the tests run `python test/test.py` from the home directory.
 
-**Group** : exterminators
+# Exterminators_520
 
-- Anirudh Lakkaraju
-- Arunima Sundar
-- Kalyani Patle
-- Rohan Lekhwani
+- `Rohan Lekhwani`
+- `Arunima Sundar`
+- `Kalyani Patle`
+- `Anirudh Lakkaraju`
