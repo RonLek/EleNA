@@ -1,0 +1,503 @@
+<!-- templates/presentation.html -->
+<html>
+    <head>
+        <meta charset='utf-8' />
+        <title></title>
+        <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js'></script>
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css' rel='stylesheet' />
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js'></script>
+        <link rel= "stylesheet" type= "text/css" href= "styles/button-style.css">
+        <link rel= "stylesheet" type= "text/css" href= "styles/text_styles.css">
+        <style>
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            body { margin:0; padding:0; }
+            #wrapper { position:absolute; top:0; bottom:0; width:100%; }
+            #map { position:relative; width:100%; height: 100%;}
+            .info {
+                display: block;
+                position: relative;
+                margin: 0px auto;
+                border: none;
+                border-radius: 3px;                
+                color: #222;
+                
+            } 
+            .sidenav {
+                height: 15%;
+                width: 100%;
+                position: fixed;
+                z-index: 1;
+                /* top: 100; */
+                bottom: 0;
+                left: 0;
+                background-color:#efb25d;
+                overflow-x: hidden;
+                padding-top: 5px;
+                
+            }
+            .infonav {
+                height: 150;
+                width: 280;
+                position: fixed;
+                z-index: 1;
+                /* bottom:300; */
+                top: 20;
+                left: 10;
+                background-color:#f1a233;
+                overflow-x: hidden;
+                padding-top: 5px;
+                
+            } 
+            
+            .msg {
+                /* display: block; */
+                position: relative;
+                margin: 0px auto;
+                border: none;
+                border-radius: 3px;                
+                color: rgb(34, 34, 34);
+                
+            }   
+            .button {
+                position: relative;;
+                background-color: grey; /* Green */
+                border: none;
+                color: whitesmoke;
+                padding: 15px 32px;
+                text-align: center;
+                
+                
+            } 
+            .button:active:enabled {
+                background-color: #3a3a42;
+                box-shadow: 0 5px #666;
+                transform: translateY(4px);
+            }
+            .button:hover:enabled {background-color: darkgray}
+            #loading {
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                position: fixed;
+                display: block;
+                opacity: 0.7;
+                background-color: #fff;
+                z-index: 99;
+                text-align: center;
+            }    
+            #loading-image {
+                z-index: 100;
+                position: fixed; /* or absolute */
+                top: 50%;
+                left: 50%;
+            }
+
+            .logo{
+                position: fixed;
+                height:50px; 
+                width: 130px; 
+                bottom: 40px; 
+                left:150px; 
+                padding: 1px;
+            }
+
+            .logo2{
+                position: fixed;
+                height:80; 
+                width: 100; 
+                bottom: 30px; 
+                left:50px; 
+                padding: 1px;
+            }
+
+            .thres{
+                width: 130px; 
+                /* top:115px; */
+                bottom:15px;
+                position: fixed; 
+                /* height: 90%;  */
+                left: 300px; 
+                padding: 1px
+            }
+
+            .reset-button {
+                position: fixed; 
+                /* top: 105px;  */
+                bottom:44px;
+                left: 590px;
+                display: inline-block;
+                padding: 2px;
+                min-width: 100px;
+                height: 24px;
+                text-align: center;
+                text-overflow: ellipsis;
+                text-transform: uppercase;
+                color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+                background-color: rgb(var(--pure-material-primary-rgb, 51, 51, 51));
+                font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+                box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 16px;
+                overflow: hidden;
+                outline: none;
+                cursor: pointer;
+                transition: box-shadow 0.2s;
+                box-sizing: border-box;
+                border: none;
+            }
+
+            .calculate-button {
+                position: fixed; 
+                /* top: 135px;  */
+                bottom:75;
+                left: 590px;
+                display: inline-block;
+                padding: 2px;
+                min-width: 100px;
+                height: 24px;
+                text-align: center;
+                text-overflow: ellipsis;
+                text-transform: uppercase;
+                color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+                background-color: rgb(var(--pure-material-primary-rgb, 51, 51, 51));
+                font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+                box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 16px;
+                overflow: hidden;
+                outline: none;
+                cursor: pointer;
+                transition: box-shadow 0.2s;
+                box-sizing: border-box;
+                border: none;
+            }
+
+            .calculate-button:disabled {
+                color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+                background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.12);
+                box-shadow: none;
+                cursor: initial;
+            }
+
+            .calculate-button:disabled::before {
+                opacity: 0;
+            }
+
+            .calculate-button:disabled::after {
+                opacity: 0;
+            }
+
+        </style>
+    </head>
+    <body>
+        <body>
+        <div id="wrapper">
+            <div id="map"></div>
+        </div>
+        <div class="sidenav">
+            <img id="logo" src= "/Elena-one.png" alt="Logo" class="logo" />
+            <img id="logo2" src= "/trekking.png" alt="Logo2" class="logo2" />
+
+            <label for="threshold" class="thres">Elevation max path limit (x%) &nbsp;&nbsp;</label>
+            <input type="number" id="x" min="0" name="threshold" value=0 style="width: 50px; position: fixed; left: 320px; bottom:63; padding: 1px; text-align: center; border: none;">
+            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 345px"></div> -->
+            <input type="radio" name="skill1" class="check" style="position: fixed; bottom:49px; left: 420px; padding: 1px" value="minimize"> 
+            <label for="skill1" style="position: fixed; bottom:47px; left: 440px; padding: 1px"> Minimize Elevation </label>
+            <input type="radio" name="skill2" style="position: fixed; bottom:77px; left: 420px; padding: 1px" class="check" value="maximize" checked>
+            <label for="skill2" style="position: fixed; bottom:75px; left: 440px; padding: 1px"> Maximize Elevation </label>
+            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 515px"></div> -->
+            <button id="reset" class="reset-button">Reset</button>
+            <button id="calc_route" class="calculate-button" disabled>Calculate</button>
+            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 640px"></div> -->
+            
+            <label style="position: fixed; font-weight: 900;bottom: 47px; left: 735px; padding: 1px; color: #B01F00">Elena:</label>
+            <hr style="position: fixed; bottom: 61px; left: 645px; width: 600px; border-bottom: 1px solid #8A8888;">
+            <label style="position: fixed; font-weight: 900; bottom: 75px; left: 725px; padding: 1px; color: blue">Shortest:</label>
+            <!-- <div style="border-right: 1px solid #8A8888; height: 54px; position: absolute; left: 720px"></div> -->
+            
+            <label style="position: fixed; bottom: 47px; left: 820px; padding: 1px; color: #B01F00">Gain: </label>
+            <div id="gain_1" style="position: fixed; bottom: 47px; left: 880px; padding: 1px; color: #B01F00"></div>
+            
+            <label style="position: fixed; bottom: 75px; left: 820px; padding: 1px; color: blue">Gain: </label>
+            <div id="gain_2" style="position: fixed; bottom: 75px; left: 880px; padding: 1px; color: blue"></div>
+            
+            <label style="position: fixed; bottom: 47px; left: 970px; padding: 1px; color: #B01F00">Drop: </label>
+            <div id="drop_1" style="position: fixed; bottom: 47px; left: 1020px; padding: 1px; color: #B01F00"></div>
+            
+            <label style="position: fixed; bottom: 75px; left: 970px; padding: 1px; color: blue">Drop: </label>
+            <div id="drop_2" style="position: fixed; bottom: 75px; left: 1020px; padding: 1px; color: blue"></div>
+            
+            <label style="position: fixed; bottom: 47px; left: 1120px; padding: 1px; color: #B01F00">Distance: </label>
+            <div id="dist_1" style="position: fixed; bottom: 47px; left: 1200px; padding: 1px; color: #B01F00"></div>
+            
+            <label style="position: fixed; bottom: 75px; left: 1120px; padding: 1px; color: blue">Distance: </label>
+            <div id="dist_2" style="position: fixed; bottom: 75px; left: 1200px; padding: 1px; color: blue"></div>
+            
+        </div>
+        <div id="info" class="infonav">
+            <div id='lat' style="position: fixed; top:30; left: 20px; padding: 1px">Latitutde: </div>
+            <div id='long' style="position: fixed; top:60; left: 20px; padding: 1px">Longitude: </div>
+            <div id="start" style="position: fixed; top:90; left: 20px; max-width: 250px; padding: 1px"> Start Location: </div>
+            <div id="end" style="position: fixed; top:120; left: 20px; max-width: 250px; padding: 1px"> End Location: </div> 
+        </div>
+        
+        <div id="loading">
+            <img id="loading-image" src= "/map_loader.gif" alt="Loading..." style="top: 300; left: 570" />
+        </div>
+        
+        <script>
+            var start_flag=false;
+            var end_flag=false;
+            var start_loc="";
+            var end_loc="";
+            var minimize_elevation=true;
+            $(document).ready(function(){
+                $('.check').click(function() {
+                    $('.check').not(this).prop('checked', false);
+                });
+            });
+
+            mapboxgl.accessToken = '{{ ACCESS_KEY }}';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [-72.529262, 42.384803],
+                zoom: 13,
+            });
+
+            var m1, m2;
+            points = turf.featureCollection([]);
+            
+            map.on("load" , () => {
+                $('#loading').hide();
+                // add data source to hold our data we want to display
+                map.addSource('circleData', {
+                    type: 'geojson',
+                    data: {
+                    type: 'FeatureCollection',
+                    features: [],
+                    },
+                });
+
+                map.addLayer({
+                    id: 'data',
+                    type: 'circle',
+                    source: 'circleData',
+                    paint: {
+                    'circle-opacity' : 0.1,
+                    'circle-radius': 300,
+                    'circle-stroke-width': 2,
+                    'circle-stroke-color': '#333',
+                    },
+                });
+            }
+            );
+            map.on('mousemove', function (e) {
+                
+                document.getElementById('lat').innerHTML =                    
+                    "Latitude: "+e.lngLat["lat"].toFixed(4);
+
+                document.getElementById('long').innerHTML = 
+                    "Longitude: "+e.lngLat["lng"].toFixed(4);
+            });
+            
+            map.on('click', function(e) {
+
+                lngLat = new Array(e.lngLat.lng, e.lngLat.lat);
+
+                console.log(JSON.stringify(e.lngLat))
+                if (!start_flag)
+                {
+                    document.getElementById('start').innerHTML ="Start Location:("+Math.round(e.lngLat["lat"] * 10000)/10000+","+Math.round(e.lngLat["lng"] * 10000)/10000+")";
+                    start_loc=JSON.stringify(e.lngLat);
+                    start_flag=true;
+                    m1 = new mapboxgl.Marker({color:'red'})
+                    .setLngLat(e.lngLat)
+                    .addTo(map);
+                    map.flyTo({center: lngLat});
+                }
+                else if(!end_flag )
+                {
+                    document.getElementById('end').innerHTML ="End Location:("+Math.round(e.lngLat["lat"] * 10000)/10000+","+Math.round(e.lngLat["lng"] * 10000)/10000+")";
+                    end_loc=JSON.stringify(e.lngLat);
+                    m2 = new mapboxgl.Marker({color:'blue'})
+                    .setLngLat(e.lngLat)
+                    .addTo(map);
+                    end_flag=true;
+                    document.getElementById("calc_route").disabled = false;
+                }
+            });
+            
+            function reset()
+            {
+                document.getElementById('start').innerHTML ="Start Location: ";
+                document.getElementById('end').innerHTML ="End Location: ";
+                document.getElementById('calc_route').innerHTML ="Calculate"
+                document.getElementById("calc_route").disabled = true;
+                document.getElementById('x').value = 0;
+                document.getElementById('info').style.height = "135px";
+                document.getElementById('end').style.top = "185px";
+                document.getElementById('start').style.top = "155px";
+                start_loc="";
+                start_flag=false;
+                end_loc="";
+                m1.remove();
+                m2.remove();
+                end_flag=false;
+                points = turf.featureCollection([]);
+                map.getSource('circleData').setData(points);
+                if (map.getLayer("shortest_route")){
+                    map.removeLayer("shortest_route");
+                }
+
+                if (map.getSource("shortest_route")){
+                    map.removeSource("shortest_route");
+                }
+
+                if (map.getLayer("ele_route")){
+                    map.removeLayer("ele_route");
+                }
+
+                if (map.getSource("ele_route")){
+                    map.removeSource("ele_route");
+                }
+  
+                document.getElementById('gain_1').innerHTML="";
+                document.getElementById('gain_2').innerHTML="";
+                document.getElementById('drop_1').innerHTML="";
+                document.getElementById('drop_2').innerHTML="";
+                document.getElementById('dist_1').innerHTML="";
+                document.getElementById('dist_2').innerHTML="";
+
+            }
+            function calc_route_reset()
+            {
+                
+                if (map.getLayer("shortest_route")){
+                    map.removeLayer("shortest_route");
+                }
+
+                if (map.getSource("shortest_route")){
+                    map.removeSource("shortest_route");
+                }
+
+                if (map.getLayer("ele_route")){
+                    map.removeLayer("ele_route");
+                }
+
+                if (map.getSource("ele_route")){
+                    map.removeSource("ele_route");
+                }
+ 
+                document.getElementById('gain_1').innerHTML="";
+                document.getElementById('gain_2').innerHTML="";
+                document.getElementById('drop_1').innerHTML="";
+                document.getElementById('drop_2').innerHTML="";
+                document.getElementById('dist_1').innerHTML="";
+                document.getElementById('dist_2').innerHTML="";
+
+            }
+            document.getElementById('reset').onclick=reset;
+            function handleData(data)
+            {   
+                if (data["popup_flag"]==0)  
+                {
+                    var temp=confirm("Selected locations do not have neighboring nodes in underlying graph.Please select different points.");
+                    return; print(elevation_profile_elenav)
+                }  
+                console.log(data["popup_flag"])
+                
+                if (data["popup_flag"]==1)  
+                {
+                    var temp=confirm("Could not find a path optimizing elevation for the given threshold (Plotting just the shortest path.).");
+                    
+                }
+                
+                map.addSource("ele_route", {
+                    "type": "geojson",
+                    "data": data["elevation_route"]
+                });
+
+                map.addLayer({
+                    "id": "ele_route",
+                    "type": "line",
+                    "source": "ele_route",
+                    "layout": {
+                        "line-join": "round",
+                        "line-cap": "round"
+                    },
+                    "paint": {
+                        "line-color": "#B01F00",
+                        "line-width": 2
+                    }
+                });
+
+                map.addSource("shortest_route", {
+                    "type": "geojson",
+                    "data": data["shortest_route"]
+                });
+
+                map.addLayer({
+                    "id": "shortest_route",
+                    "type": "line",
+                    "source": "shortest_route",
+                    "layout": {
+                        "line-join": "round",
+                        "line-cap": "round"
+                    },
+                    "paint": {
+                        "line-color": "Blue",
+                        "line-width": 2
+                    }
+                });
+                console.log("Routes Drawn");
+                document.getElementById('info').style.height = "260px";
+                document.getElementById('start').innerHTML = "Start Location: " + data["start"];
+                document.getElementById('end').innerHTML = "End Location: " + data["end"];
+                document.getElementById('end').style.top = "245px";
+                document.getElementById('start').style.top = "150px";
+                document.getElementById('calc_route').innerHTML ="Re-Calculate";
+                document.getElementById('gain_1').innerHTML= data["gainElenav"].toFixed(2) + 'm';
+                document.getElementById('drop_1').innerHTML= data["dropElenav"].toFixed(2) + 'm';
+                document.getElementById('dist_1').innerHTML= data["elenavDist"].toFixed(2) + 'm';
+                document.getElementById('gain_2').innerHTML= data["gainShort"].toFixed(2) + 'm';
+                document.getElementById('drop_2').innerHTML= data["dropShort"].toFixed(2) + 'm';
+                document.getElementById('dist_2').innerHTML= data["shortDist"].toFixed(2) + 'm';
+
+            }
+
+            document.getElementById('calc_route').onclick=function(){                
+                var checkedValue = $('.check:checked').val();  
+                console.log(document.getElementById('x').value) ;             
+                var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';                
+                
+                $('#loading').show();
+                calc_route_reset();
+                $.ajax({
+                    type: "POST",
+                    url: '/route',
+                    data: input_data,
+                    success: function(data){
+                        $('#loading').hide();
+                        console.log("POST SUCCESS");                         
+                        handleData(data);                        
+                    },
+                    dataType: "json"
+                });
+            };
+        </script>
+        
+    </body>
+</html>
