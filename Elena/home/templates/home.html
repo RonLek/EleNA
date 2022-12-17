@@ -3,7 +3,7 @@
         <meta charset='utf-8' />
         <title></title>
         <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js'></script>
+        <script id="mapbox-gl" src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js'></script>
         <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css' rel='stylesheet' />
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -15,6 +15,7 @@
         <link rel= "stylesheet" type= "text/css" href= "styles/home-styles.css">
 
     </head>
+
     <body>
         <body>
         <div id="wrapper">
@@ -26,35 +27,31 @@
 
             <label for="threshold" class="thres">Elevation max path limit (x%) &nbsp;&nbsp;</label>
             <input type="number" id="x" min="0" name="threshold" value=0 style="width: 50px; position: fixed; left: 320px; bottom:63; padding: 1px; text-align: center; border: none;">
-            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 345px"></div> -->
             <input type="radio" name="skill1" class="check" style="position: fixed; bottom:49px; left: 420px; padding: 1px" value="minimize"> 
             <label for="skill1" style="position: fixed; bottom:47px; left: 440px; padding: 1px"> Minimize Elevation </label>
             <input type="radio" name="skill2" style="position: fixed; bottom:77px; left: 420px; padding: 1px" class="check" value="maximize" checked>
             <label for="skill2" style="position: fixed; bottom:75px; left: 440px; padding: 1px"> Maximize Elevation </label>
-            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 515px"></div> -->
             <button id="reset" class="reset-button">Reset</button>
             <button id="calc_route" class="calculate-button" disabled>Calculate</button>
-            <!-- <div style="border-right: 1px solid #8A8888; height: 57px; position: absolute; left: 640px"></div> -->
             
-            <label style="position: fixed; font-weight: 900;bottom: 47px; left: 735px; padding: 1px; color: #B01F00">Elena:</label>
+            <label style="position: fixed; font-weight: 900;bottom: 47px; left: 735px; padding: 1px; color: green">Elena:</label>
             <hr style="position: fixed; bottom: 61px; left: 645px; width: 600px; border-bottom: 1px solid #8A8888;">
             <label style="position: fixed; font-weight: 900; bottom: 75px; left: 725px; padding: 1px; color: blue">Shortest:</label>
-            <!-- <div style="border-right: 1px solid #8A8888; height: 54px; position: absolute; left: 720px"></div> -->
             
-            <label style="position: fixed; bottom: 47px; left: 820px; padding: 1px; color: #B01F00">Gain: </label>
-            <div id="gain_1" style="position: fixed; bottom: 47px; left: 880px; padding: 1px; color: #B01F00"></div>
+            <label style="position: fixed; bottom: 47px; left: 820px; padding: 1px; color: green">Gain: </label>
+            <div id="gain_1" style="position: fixed; bottom: 47px; left: 880px; padding: 1px; color: green"></div>
             
             <label style="position: fixed; bottom: 75px; left: 820px; padding: 1px; color: blue">Gain: </label>
             <div id="gain_2" style="position: fixed; bottom: 75px; left: 880px; padding: 1px; color: blue"></div>
             
-            <label style="position: fixed; bottom: 47px; left: 970px; padding: 1px; color: #B01F00">Drop: </label>
-            <div id="drop_1" style="position: fixed; bottom: 47px; left: 1020px; padding: 1px; color: #B01F00"></div>
+            <label style="position: fixed; bottom: 47px; left: 970px; padding: 1px; color: green">Drop: </label>
+            <div id="drop_1" style="position: fixed; bottom: 47px; left: 1020px; padding: 1px; color: green"></div>
             
             <label style="position: fixed; bottom: 75px; left: 970px; padding: 1px; color: blue">Drop: </label>
             <div id="drop_2" style="position: fixed; bottom: 75px; left: 1020px; padding: 1px; color: blue"></div>
             
-            <label style="position: fixed; bottom: 47px; left: 1120px; padding: 1px; color: #B01F00">Distance: </label>
-            <div id="dist_1" style="position: fixed; bottom: 47px; left: 1200px; padding: 1px; color: #B01F00"></div>
+            <label style="position: fixed; bottom: 47px; left: 1120px; padding: 1px; color: green">Distance: </label>
+            <div id="dist_1" style="position: fixed; bottom: 47px; left: 1200px; padding: 1px; color: green"></div>
             
             <label style="position: fixed; bottom: 75px; left: 1120px; padding: 1px; color: blue">Distance: </label>
             <div id="dist_2" style="position: fixed; bottom: 75px; left: 1200px; padding: 1px; color: blue"></div>
@@ -69,7 +66,7 @@
         
         <div id="loading">
             <img id="loading-image" src= "/map_loader.gif" alt="Loading..." style="top: 300; left: 570" />
-        </div>
+        </div>     
         
         <script>
             var start_flag=false;
@@ -153,165 +150,8 @@
                     document.getElementById("calc_route").disabled = false;
                 }
             });
-            
-            function reset()
-            {
-                document.getElementById('start').innerHTML ="Start Location: ";
-                document.getElementById('end').innerHTML ="End Location: ";
-                document.getElementById('calc_route').innerHTML ="Calculate"
-                document.getElementById("calc_route").disabled = true;
-                document.getElementById('x').value = 0;
-                document.getElementById('info').style.height = "135px";
-                document.getElementById('end').style.top = "185px";
-                document.getElementById('start').style.top = "155px";
-                start_loc="";
-                start_flag=false;
-                end_loc="";
-                m1.remove();
-                m2.remove();
-                end_flag=false;
-                points = turf.featureCollection([]);
-                map.getSource('circleData').setData(points);
-                if (map.getLayer("shortest_route")){
-                    map.removeLayer("shortest_route");
-                }
-
-                if (map.getSource("shortest_route")){
-                    map.removeSource("shortest_route");
-                }
-
-                if (map.getLayer("ele_route")){
-                    map.removeLayer("ele_route");
-                }
-
-                if (map.getSource("ele_route")){
-                    map.removeSource("ele_route");
-                }
-  
-                document.getElementById('gain_1').innerHTML="";
-                document.getElementById('gain_2').innerHTML="";
-                document.getElementById('drop_1').innerHTML="";
-                document.getElementById('drop_2').innerHTML="";
-                document.getElementById('dist_1').innerHTML="";
-                document.getElementById('dist_2').innerHTML="";
-
-            }
-            function calc_route_reset()
-            {
-                
-                if (map.getLayer("shortest_route")){
-                    map.removeLayer("shortest_route");
-                }
-
-                if (map.getSource("shortest_route")){
-                    map.removeSource("shortest_route");
-                }
-
-                if (map.getLayer("ele_route")){
-                    map.removeLayer("ele_route");
-                }
-
-                if (map.getSource("ele_route")){
-                    map.removeSource("ele_route");
-                }
- 
-                document.getElementById('gain_1').innerHTML="";
-                document.getElementById('gain_2').innerHTML="";
-                document.getElementById('drop_1').innerHTML="";
-                document.getElementById('drop_2').innerHTML="";
-                document.getElementById('dist_1').innerHTML="";
-                document.getElementById('dist_2').innerHTML="";
-
-            }
-            document.getElementById('reset').onclick=reset;
-            function handleData(data)
-            {   
-                if (data["popup_flag"]==0)  
-                {
-                    var temp=confirm("Selected locations do not have neighboring nodes in underlying graph.Please select different points.");
-                    return; print(elevation_profile_elenav)
-                }  
-                console.log(data["popup_flag"])
-                
-                if (data["popup_flag"]==1)  
-                {
-                    var temp=confirm("Could not find a path optimizing elevation for the given threshold (Plotting just the shortest path.).");
-                    
-                }
-                
-                map.addSource("ele_route", {
-                    "type": "geojson",
-                    "data": data["elevation_route"]
-                });
-
-                map.addLayer({
-                    "id": "ele_route",
-                    "type": "line",
-                    "source": "ele_route",
-                    "layout": {
-                        "line-join": "round",
-                        "line-cap": "round"
-                    },
-                    "paint": {
-                        "line-color": "#B01F00",
-                        "line-width": 2
-                    }
-                });
-
-                map.addSource("shortest_route", {
-                    "type": "geojson",
-                    "data": data["shortest_route"]
-                });
-
-                map.addLayer({
-                    "id": "shortest_route",
-                    "type": "line",
-                    "source": "shortest_route",
-                    "layout": {
-                        "line-join": "round",
-                        "line-cap": "round"
-                    },
-                    "paint": {
-                        "line-color": "Blue",
-                        "line-width": 2
-                    }
-                });
-                console.log("Routes Drawn");
-                document.getElementById('info').style.height = "260px";
-                document.getElementById('start').innerHTML = "Start Location: " + data["start"];
-                document.getElementById('end').innerHTML = "End Location: " + data["end"];
-                document.getElementById('end').style.top = "245px";
-                document.getElementById('start').style.top = "150px";
-                document.getElementById('calc_route').innerHTML ="Re-Calculate";
-                document.getElementById('gain_1').innerHTML= data["gainElenav"].toFixed(2) + 'm';
-                document.getElementById('drop_1').innerHTML= data["dropElenav"].toFixed(2) + 'm';
-                document.getElementById('dist_1').innerHTML= data["elenavDist"].toFixed(2) + 'm';
-                document.getElementById('gain_2').innerHTML= data["gainShort"].toFixed(2) + 'm';
-                document.getElementById('drop_2').innerHTML= data["dropShort"].toFixed(2) + 'm';
-                document.getElementById('dist_2').innerHTML= data["shortDist"].toFixed(2) + 'm';
-
-            }
-
-            document.getElementById('calc_route').onclick=function(){                
-                var checkedValue = $('.check:checked').val();  
-                console.log(document.getElementById('x').value) ;             
-                var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';                
-                
-                $('#loading').show();
-                calc_route_reset();
-                $.ajax({
-                    type: "POST",
-                    url: '/route',
-                    data: input_data,
-                    success: function(data){
-                        $('#loading').hide();
-                        console.log("POST SUCCESS");                         
-                        handleData(data);                        
-                    },
-                    dataType: "json"
-                });
-            };
         </script>
+        <script type="text/javascript" src="scripts/mapbox.js" ></script>
         
     </body>
 </html>
