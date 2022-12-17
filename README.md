@@ -24,8 +24,6 @@ pip install -r requirements.txt
 - ./start To start up the application. 
 - Head over to `http://127.0.0.1:5000/home` on preferably Google Chrome to use the web interface.
 
-HOME PAGE PICTURE
-![EleNa Interface](home-page.png)
 
 ### Interacting with the UI
 - The start and end points can be set by clicking on the map.
@@ -38,7 +36,38 @@ HOME PAGE PICTURE
 
 ### Back-end Logic
 
-- The backend computes the paths using two algorithms - Dijkstra and A* algorithm. The final path returned is the best of the two for the given elevation data. 
+- The backend computes the paths using two algorithms - Dijkstra and A* algorithm. 
+- The shortest path is the taken
+
+The final path returned is the best of the two for the given elevation data. 
+- Assuming the user will select points around Amherst, the map has been centered around Amherst. A new "graph.p" file has to be updated if the desired location is different. 
+
+### The Tech stack
+Our Tech stack has two components : Front End and Back End as shown in the figure below:
+
+## Architecture
+
+This web application is designed in a Model-View-Controller (MVC) architecture with the following components: 
+
+- `Elena/abstraction/abstraction.py` - Model
+- `Elena/control/control.py` and `Elena/control/algorithms` - Controller
+ - `Elena/home/templates/home.html` - View
+
+## Evaluation
+
+### Usability
+- We tried to implement a simple layout and that's intuitive to understand and interact with.
+- All the required information is provided in a clear and concise manner. The design and UI is comprehensive and pleasing to the eye. 
+- 
+### Understandability
+- Comprehensive comments have been added to improve Readability of code.
+- Effective naming conventions have been used for variables, functions and classes. 
+- Functions and classes were used wherever possible to ensure Single Responsibility Principle. 
+- 
+### Accessibility 
+- We used popping and contrasting color for easier visibility. 
+
+### Design Principles
 
 
 ### Testing 
@@ -50,3 +79,11 @@ HOME PAGE PICTURE
 - `Arunima Sundar`
 - `Kalyani Patle`
 - `Anirudh Lakkaraju`
+
+
+
+
+
+
+
+
