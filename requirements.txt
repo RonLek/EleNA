@@ -3,3 +3,4 @@ networkx==2.4
 Flask==2.1.0
 numpy==1.18.1
 geopy==1.21.0
+python-dotenv==0.21.0

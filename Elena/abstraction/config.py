@@ -1,2 +1,7 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 API={}
-API['googleapikey']="AIzaSyCJgTZU8StpSFsIulOvO40iF684-g6m4IA"
+API['googleapikey']=os.getenv('GOOGLEAPIKEY')
