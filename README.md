@@ -24,6 +24,7 @@ pip install -r requirements.txt
 - ./start To start up the application. 
 - Head over to `http://127.0.0.1:5000/home` on preferably Google Chrome to use the web interface.
 
+![EleNa Interface](home-page.jpeg)
 
 ### Interacting with the UI
 - The start and end points can be set by clicking on the map.
@@ -53,25 +54,52 @@ This web application is designed in a Model-View-Controller (MVC) architecture w
 - `Elena/control/control.py` and `Elena/control/algorithms` - Controller
  - `Elena/home/templates/home.html` - View
 
-## Evaluation
-
 ### Usability
 - We tried to implement a simple layout and that's intuitive to understand and interact with.
 - All the required information is provided in a clear and concise manner. The design and UI is comprehensive and pleasing to the eye. 
-- 
+
 ### Understandability
 - Comprehensive comments have been added to improve Readability of code.
 - Effective naming conventions have been used for variables, functions and classes. 
 - Functions and classes were used wherever possible to ensure Single Responsibility Principle. 
-- 
+
 ### Accessibility 
-- We used popping and contrasting color for easier visibility. 
+- We used popping and contrasting color for easier visibility.
+- Larger fonts make it easier for users with vision difficulties to use the application.  
+- Intuitive UI allows users with cognitive impairments easily make use of the application.   
+- Alt texts on images allow screen readers to read the content. 
 
 ### Design Principles
 
+The following design principles were followed:
+
+- Single Responsibility Principle: The classes for graph model and functions for the algorithm were created such that they have their own responsibility and purposes. 
+- Open Principle: Our shortest path algorithm is Open for improvements. We have used Dijkstra and A* algorithms for our computations but if a different algorithm is to be used, it can easily be integrated with our application. 
+- Dependency Inversion Principle : We have constructed an abstract class which supports the high level and low level models.
 
 ### Testing 
-- To run the tests run `python test/test.py` from the home directory.
+
+We have written our own custom test method which lets you know if a condition has passed or failed.
+
+Testing `abstraction.py`:
+-   `test_graph_getter `- Checks if graph is generated.
+
+Testing `control.py`:
+-   `test_get_geojson_coor` - Checks if input dictionary is generated correctly.
+-   `test_get_data_points` - Checks if data points are generated for computing the routes.
+
+Testing `algorithms.py`:
+-   `test_get_route` - Given a parent node and destination, checks if the path is generated correctly.
+-   `test_get_shortest_path` - Given source and destination, checks if the shortest path is computed correctly.
+-   `test_get_Elevation` - Checks the cost returned for a particular route given elevation_drop , elevation_gain.
+-   `test_get_cost` - Checks whether the best cost is returned given various conditions.
+
+
+## Debugging
+-   Breakpoints were added to check for debuggability of the code.   
+-   Logging statements inserted throughout the code help in debuggability.  
+-   Precondition checks allow for checking valid values.
+
 
 # Exterminators_520
 
